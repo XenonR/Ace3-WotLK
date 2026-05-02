@@ -9,6 +9,7 @@ local pairs = pairs
 local GetCursorInfo, ClearCursor = GetCursorInfo, ClearCursor
 local CreateFrame, UIParent = CreateFrame, UIParent
 local _G = _G
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
 
 --[[-----------------------------------------------------------------------------
 Support functions
@@ -307,7 +308,7 @@ local function Constructor()
 	text:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 1)
 	text:SetJustifyV("MIDDLE")
 
-	local scrollBG = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	local scrollBG = CreateFrame("Frame", nil, frame, FrameTemplate)
 	scrollBG:SetBackdrop(backdrop)
 	scrollBG:SetBackdropColor(0, 0, 0)
 	scrollBG:SetBackdropBorderColor(0.4, 0.4, 0.4)

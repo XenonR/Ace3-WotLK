@@ -12,6 +12,7 @@ local pairs = pairs
 -- WoW APIs
 local IsShiftKeyDown, IsControlKeyDown, IsAltKeyDown = IsShiftKeyDown, IsControlKeyDown, IsAltKeyDown
 local CreateFrame, UIParent = CreateFrame, UIParent
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
 
 --[[-----------------------------------------------------------------------------
 Scripts
@@ -216,7 +217,7 @@ local function Constructor()
 	label:SetJustifyH("CENTER")
 	label:SetHeight(18)
 
-	local msgframe = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+	local msgframe = CreateFrame("Frame", nil, UIParent, FrameTemplate)
 	msgframe:SetHeight(30)
 	msgframe:SetBackdrop(ControlBackdrop)
 	msgframe:SetBackdropColor(0,0,0)

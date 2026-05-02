@@ -11,6 +11,7 @@ local assert, pairs, type = assert, pairs, type
 
 -- WoW APIs
 local CreateFrame = CreateFrame
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
 
 --[[-----------------------------------------------------------------------------
 Scripts
@@ -125,7 +126,7 @@ local function Constructor()
 	dropdown.frame:Show()
 	dropdown:SetLabel("")
 
-	local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	local border = CreateFrame("Frame", nil, frame, FrameTemplate)
 	border:SetPoint("TOPLEFT", 0, -26)
 	border:SetPoint("BOTTOMRIGHT", 0, 3)
 	border:SetBackdrop(PaneBackdrop)

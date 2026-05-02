@@ -13,6 +13,15 @@ local select, tremove, unpack, tconcat = select, table.remove, unpack, table.con
 
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
+
+local function SetTextureColor(texture, r, g, b, a)
+	if texture.SetColorTexture then
+		texture:SetColorTexture(r, g, b, a)
+	else
+		texture:SetTexture(r, g, b, a)
+	end
+end
 
 -- Recycling functions
 local new, del
@@ -105,11 +114,11 @@ local function UpdateButton(button, treeline, selected, canExpand, isExpanded)
 
 	if canExpand then
 		if not isExpanded then
-			toggle:SetNormalTexture(130838) -- Interface\\Buttons\\UI-PlusButton-UP
-			toggle:SetPushedTexture(130836) -- Interface\\Buttons\\UI-PlusButton-DOWN
+			toggle:SetNormalTexture("Interface\\Buttons\\UI-PlusButton-UP")
+			toggle:SetPushedTexture("Interface\\Buttons\\UI-PlusButton-DOWN")
 		else
-			toggle:SetNormalTexture(130821) -- Interface\\Buttons\\UI-MinusButton-UP
-			toggle:SetPushedTexture(130820) -- Interface\\Buttons\\UI-MinusButton-DOWN
+			toggle:SetNormalTexture("Interface\\Buttons\\UI-MinusButton-UP")
+			toggle:SetPushedTexture("Interface\\Buttons\\UI-MinusButton-DOWN")
 		end
 		toggle:Show()
 	else
@@ -637,7 +646,7 @@ local function Constructor()
 	local num = AceGUI:GetNextWidgetNum(Type)
 	local frame = CreateFrame("Frame", nil, UIParent)
 
-	local treeframe = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	local treeframe = CreateFrame("Frame", nil, frame, FrameTemplate)
 	treeframe:SetPoint("TOPLEFT")
 	treeframe:SetPoint("BOTTOMLEFT")
 	treeframe:SetWidth(DEFAULT_TREE_WIDTH)
@@ -656,7 +665,7 @@ local function Constructor()
 	treeframe:SetScript("OnSizeChanged", Tree_OnSizeChanged)
 	treeframe:SetScript("OnMouseWheel", Tree_OnMouseWheel)
 
-	local dragger = CreateFrame("Frame", nil, treeframe, "BackdropTemplate")
+	local dragger = CreateFrame("Frame", nil, treeframe, FrameTemplate)
 	dragger:SetWidth(8)
 	dragger:SetPoint("TOP", treeframe, "TOPRIGHT")
 	dragger:SetPoint("BOTTOM", treeframe, "BOTTOMRIGHT")
@@ -679,9 +688,9 @@ local function Constructor()
 
 	local scrollbg = scrollbar:CreateTexture(nil, "BACKGROUND")
 	scrollbg:SetAllPoints(scrollbar)
-	scrollbg:SetColorTexture(0,0,0,0.4)
+	SetTextureColor(scrollbg, 0, 0, 0, 0.4)
 
-	local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	local border = CreateFrame("Frame", nil, frame, FrameTemplate)
 	border:SetPoint("TOPLEFT", treeframe, "TOPRIGHT")
 	border:SetPoint("BOTTOMRIGHT")
 	border:SetBackdrop(PaneBackdrop)

@@ -15,6 +15,7 @@ local PlaySound = PlaySound
 local CreateFrame, UIParent = CreateFrame, UIParent
 local C_TimerAfter = C_Timer and C_Timer.After
 local AceTimer = LibStub and LibStub("AceTimer-3.0", true)
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
 
 local function TimerAfter(delay, func)
 	if C_TimerAfter then
@@ -233,7 +234,7 @@ local function Constructor()
 	label:SetJustifyH("CENTER")
 	label:SetHeight(15)
 
-	local slider = CreateFrame("Slider", nil, frame, "BackdropTemplate")
+	local slider = CreateFrame("Slider", nil, frame, FrameTemplate)
 	slider:SetOrientation("HORIZONTAL")
 	slider:SetHeight(15)
 	slider:SetHitRectInsets(0, 0, -10, 0)
@@ -255,7 +256,7 @@ local function Constructor()
 	local hightext = slider:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	hightext:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", -2, 3)
 
-	local editbox = CreateFrame("EditBox", nil, frame, "BackdropTemplate")
+	local editbox = CreateFrame("EditBox", nil, frame, FrameTemplate)
 	editbox:SetAutoFocus(false)
 	editbox:SetFontObject(GameFontHighlightSmall)
 	editbox:SetPoint("TOP", slider, "BOTTOM")

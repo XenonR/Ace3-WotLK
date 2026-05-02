@@ -13,6 +13,7 @@ local pairs, ipairs, assert, type, wipe = pairs, ipairs, assert, type, table.wip
 local PlaySound = PlaySound
 local CreateFrame, UIParent = CreateFrame, UIParent
 local _G = _G
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
 
 -- local upvalue storage used by BuildTabs
 local widths = {}
@@ -502,7 +503,7 @@ local function Constructor()
 	titletext:SetHeight(18)
 	titletext:SetText("")
 
-	local border = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	local border = CreateFrame("Frame", nil, frame, FrameTemplate)
 	border:SetPoint("TOPLEFT", 1, -27)
 	border:SetPoint("BOTTOMRIGHT", -1, 3)
 	border:SetBackdrop(PaneBackdrop)

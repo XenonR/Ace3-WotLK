@@ -58,12 +58,12 @@ function AceComm:RegisterComm(prefix, method)
 		method = "OnCommReceived"
 	end
 
-	if #prefix > 16 then -- TODO: 15?
+	if #prefix > 16 and (C_ChatInfo or RegisterAddonMessagePrefix) then -- TODO: 15?
 		error("AceComm:RegisterComm(prefix,method): prefix length is limited to 16 characters")
 	end
 	if C_ChatInfo then
 		C_ChatInfo.RegisterAddonMessagePrefix(prefix)
-	else
+	elseif RegisterAddonMessagePrefix then
 		RegisterAddonMessagePrefix(prefix)
 	end
 

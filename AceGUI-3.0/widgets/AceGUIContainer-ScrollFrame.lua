@@ -13,6 +13,14 @@ local min, max, floor = math.min, math.max, math.floor
 -- WoW APIs
 local CreateFrame, UIParent = CreateFrame, UIParent
 
+local function SetTextureColor(texture, r, g, b, a)
+	if texture.SetColorTexture then
+		texture:SetColorTexture(r, g, b, a)
+	else
+		texture:SetTexture(r, g, b, a)
+	end
+end
+
 --[[-----------------------------------------------------------------------------
 Support functions
 -------------------------------------------------------------------------------]]
@@ -187,7 +195,7 @@ local function Constructor()
 
 	local scrollbg = scrollbar:CreateTexture(nil, "BACKGROUND")
 	scrollbg:SetAllPoints(scrollbar)
-	scrollbg:SetColorTexture(0, 0, 0, 0.4)
+	SetTextureColor(scrollbg, 0, 0, 0, 0.4)
 
 	--Container Support
 	local content = CreateFrame("Frame", nil, scrollframe)

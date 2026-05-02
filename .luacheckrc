@@ -81,6 +81,7 @@ read_globals = {
 
 	-- FrameXML Frames & Constants
 	"ACCEPT",
+	"BackdropTemplate",
 	"CANCEL",
 	"ChatFontNormal",
 	"CLOSE",

@@ -10,6 +10,7 @@ local tsort = table.sort
 local PlaySound = PlaySound
 local UIParent, CreateFrame = UIParent, CreateFrame
 local _G = _G
+local FrameTemplate = BackdropTemplate and "BackdropTemplate" or nil
 
 local function fixlevels(parent,...)
 	local i = 1
@@ -249,7 +250,7 @@ do
 
 	local function Constructor()
 		local count = AceGUI:GetNextWidgetNum(widgetType)
-		local frame = CreateFrame("Frame", "AceGUI30Pullout"..count, UIParent, "BackdropTemplate")
+		local frame = CreateFrame("Frame", "AceGUI30Pullout"..count, UIParent, FrameTemplate)
 		local self = {}
 		self.count = count
 		self.type = widgetType
@@ -300,7 +301,7 @@ do
 		scrollFrame.obj = self
 		itemFrame.obj = self
 
-		local slider = CreateFrame("Slider", "AceGUI30PulloutScrollbar"..count, scrollFrame, "BackdropTemplate")
+		local slider = CreateFrame("Slider", "AceGUI30PulloutScrollbar"..count, scrollFrame, FrameTemplate)
 		slider:SetOrientation("VERTICAL")
 		slider:SetHitRectInsets(0, 0, -10, 0)
 		slider:SetBackdrop(sliderBackdrop)
