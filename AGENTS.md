@@ -17,6 +17,7 @@ Ace3 is a standalone bundle of WoW addon development libraries, not a normal gam
 
 ## Coding Conventions
 
+- Client API Interface is version 30300
 - Keep code Lua 5.1 compatible. Avoid Lua 5.2+ features such as `_ENV`, `goto`, `table.pack`, `table.unpack`, and bitwise operators.
 - Prefer local aliases for Lua and WoW APIs near the top of files, matching the existing style.
 - Avoid new globals. If a global is intentional, document it with a `-- GLOBALS:` comment where appropriate and update `.luacheckrc`.
@@ -45,33 +46,6 @@ Ace3 is a standalone bundle of WoW addon development libraries, not a normal gam
 - Register widgets with `AceGUI:RegisterWidgetType(Type, Constructor, Version)`.
 - `OnAcquire` must restore default visible state. `OnRelease` should clear transient data, detach scripts or callbacks when needed, hide frames, and leave objects safe for recycling.
 - If adding a widget/container, add it to `AceGUI-3.0/AceGUI-3.0.xml` in a sensible order.
-
-## Testing And Verification
-
-- Lint with:
-    ```sh
-    luacheck . --no-color -q
-    ```
-- Run tests from inside `tests/`; the scripts use relative globs and `dofile` paths:
-    ```bat
-    cd tests
-    runall.bat
-    ```
-    On Windows, `runall.bat` defaults to `lua5.1.exe`. In PowerShell you can override it with `$env:lua = "path\\to\\lua.exe"` before running the batch file.
-- On Unix-like shells:
-    ```sh
-    cd tests
-    lua=lua5.1 ./runall.sh
-    ```
-- Individual tests can be run from `tests/`, for example `lua5.1 AceDB-3.0.lua`.
-- `tests/check_globals.sh` uses `luac -p -l` to find accidental global writes in non-test Lua files.
-- When changing FrameXML behavior, widget layout, events, saved variables, comms, or hooks, also verify in-game where possible. The Lua tests do not fully emulate the WoW client.
-
-## Test Naming
-
-- `tests/runall.bat` and `tests/runall.sh` discover most tests with the `*-?.*.lua` pattern. If a new test does not match that pattern, update both scripts or document how to run it.
-- Tests normally load `wow_api.lua`, `LibStub.lua`, any required helper libraries, then the real library file from `..`.
-- Keep test assertions simple and Lua 5.1 compatible. Several tests assert error substrings, so be deliberate when editing validation messages.
 
 ## Working Safely
 
