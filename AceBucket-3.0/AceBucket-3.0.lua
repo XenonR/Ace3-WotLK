@@ -36,7 +36,7 @@
 -- @name AceBucket-3.0.lua
 -- @release $Id$
 
-local MAJOR, MINOR = "AceBucket-3.0", 4
+local MAJOR, MINOR = "AceBucket-3.0", 5
 local AceBucket, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceBucket then return end -- No Upgrade needed
@@ -49,7 +49,7 @@ local AceEvent, AceTimer
 
 -- Lua APIs
 local tconcat = table.concat
-local type, next, pairs, select = type, next, pairs, select
+local type, next, pairs, select, unpack = type, next, pairs, select, unpack
 local tonumber, tostring, rawset = tonumber, tostring, rawset
 local assert, loadstring, error = assert, loadstring, error
 
@@ -66,7 +66,8 @@ end
 
 local function safecall(func, ...)
 	if func then
-		return xpcall(func, errorhandler, ...)
+		local args, argc = {...}, select("#", ...)
+		return xpcall(function() return func(unpack(args, 1, argc)) end, errorhandler)
 	end
 end
 

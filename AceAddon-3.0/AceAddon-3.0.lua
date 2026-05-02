@@ -30,7 +30,7 @@
 -- @name AceAddon-3.0.lua
 -- @release $Id$
 
-local MAJOR, MINOR = "AceAddon-3.0", 13
+local MAJOR, MINOR = "AceAddon-3.0", 14
 local AceAddon, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceAddon then return end -- No Upgrade needed.
@@ -63,7 +63,8 @@ local function safecall(func, ...)
 	-- this safecall is used for optional functions like OnInitialize OnEnable etc. When they are not
 	-- present execution should continue without hinderance
 	if type(func) == "function" then
-		return xpcall(func, errorhandler, ...)
+		local args, argc = {...}, select("#", ...)
+		return xpcall(function() return func(unpack(args, 1, argc)) end, errorhandler)
 	end
 end
 

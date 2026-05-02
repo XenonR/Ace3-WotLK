@@ -23,7 +23,7 @@
 -- LICENSE: ChatThrottleLib is released into the Public Domain
 --
 
-local CTL_VERSION = 31
+local CTL_VERSION = 32
 
 local _G = _G
 
@@ -75,6 +75,7 @@ local next = next
 local strlen = string.len
 local GetFramerate = GetFramerate
 local unpack,type,pairs,wipe = unpack,type,pairs,table.wipe
+local securecallfunction = securecallfunction or function(func, ...) return func(...) end
 
 
 -----------------------------------------------------------------------
@@ -242,13 +243,19 @@ function ChatThrottleLib:Init()
 			end)
 		end
 		--SendAddonMessage
-		hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
-			return ChatThrottleLib.Hook_SendAddonMessage(...)
-		end)
+		if _G.C_ChatInfo and _G.C_ChatInfo.SendAddonMessage then
+			hooksecurefunc(_G.C_ChatInfo, "SendAddonMessage", function(...)
+				return ChatThrottleLib.Hook_SendAddonMessage(...)
+			end)
+		else
+			hooksecurefunc("SendAddonMessage", function(...)
+				return ChatThrottleLib.Hook_SendAddonMessage(...)
+			end)
+		end
 	end
 
 	-- v26: Hook SendAddonMessageLogged for traffic logging
-	if not self.securelyHookedLogged then
+	if not self.securelyHookedLogged and _G.C_ChatInfo and _G.C_ChatInfo.SendAddonMessageLogged then
 		self.securelyHookedLogged = true
 		hooksecurefunc(_G.C_ChatInfo, "SendAddonMessageLogged", function(...)
 			return ChatThrottleLib.Hook_SendAddonMessageLogged(...)
@@ -262,7 +269,7 @@ function ChatThrottleLib:Init()
 			hooksecurefunc(_G.C_BattleNet, "SendGameData", function(...)
 				return ChatThrottleLib.Hook_BNSendGameData(...)
 			end)
-		else
+		elseif _G.BNSendGameData then
 			hooksecurefunc("BNSendGameData", function(...)
 				return ChatThrottleLib.Hook_BNSendGameData(...)
 			end)
@@ -344,7 +351,7 @@ end
 -- - ... made up of N "Pipe"s (1 for each destination/pipename)
 -- - and each pipe contains messages
 
-local SendAddonMessageResult = Enum.SendAddonMessageResult or {
+local SendAddonMessageResult = (_G.Enum and _G.Enum.SendAddonMessageResult) or {
 	Success = 0,
 	AddonMessageThrottle = 3,
 	NotInGroup = 5,
@@ -386,7 +393,8 @@ end
 
 local function PerformSend(sendFunction, ...)
 	bMyTraffic = true
-	local sendResult = MapToSendResult(xpcall(sendFunction, CallErrorHandler, ...))
+	local args, argc = {...}, select("#", ...)
+	local sendResult = MapToSendResult(xpcall(function() return sendFunction(unpack(args, 1, argc)) end, CallErrorHandler))
 	bMyTraffic = false
 	return sendResult
 end
@@ -553,7 +561,7 @@ function ChatThrottleLib:SendChatMessage(prio, prefix,   text, chattype, languag
 
 	-- Check if there's room in the global available bandwidth gauge to send directly
 	if not self.bQueueing and nSize < self:UpdateAvail() then
-		local sendResult = PerformSend(_G.C_ChatInfo.SendChatMessage or _G.SendChatMessage, text, chattype, language, destination)
+		local sendResult = PerformSend((_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage) or _G.SendChatMessage, text, chattype, language, destination)
 
 		if not IsThrottledSendResult(sendResult) then
 			local didSend = (sendResult == SendAddonMessageResult.Success)
@@ -573,7 +581,7 @@ function ChatThrottleLib:SendChatMessage(prio, prefix,   text, chattype, languag
 
 	-- Message needs to be queued
 	local msg = NewMsg()
-	msg.f = _G.C_ChatInfo.SendChatMessage or _G.SendChatMessage
+	msg.f = (_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage) or _G.SendChatMessage
 	msg[1] = text
 	msg[2] = chattype or "SAY"
 	msg[3] = language
@@ -635,7 +643,7 @@ function ChatThrottleLib:SendAddonMessage(prio, prefix, text, chattype, target, 
 		error("ChatThrottleLib:SendAddonMessage(): message length cannot exceed 255 bytes", 2)
 	end
 
-	local sendFunction = _G.C_ChatInfo.SendAddonMessage
+	local sendFunction = (_G.C_ChatInfo and _G.C_ChatInfo.SendAddonMessage) or _G.SendAddonMessage
 	SendAddonMessageInternal(self, sendFunction, prio, prefix, text, chattype, target, queueName, callbackFn, callbackArg)
 end
 
@@ -649,7 +657,10 @@ function ChatThrottleLib:SendAddonMessageLogged(prio, prefix, text, chattype, ta
 		error("ChatThrottleLib:SendAddonMessageLogged(): message length cannot exceed 255 bytes", 2)
 	end
 
-	local sendFunction = _G.C_ChatInfo.SendAddonMessageLogged
+	local sendFunction = _G.C_ChatInfo and _G.C_ChatInfo.SendAddonMessageLogged
+	if not sendFunction then
+		error("ChatThrottleLib:SendAddonMessageLogged(): SendAddonMessageLogged is not available", 2)
+	end
 	SendAddonMessageInternal(self, sendFunction, prio, prefix, text, chattype, target, queueName, callbackFn, callbackArg)
 end
 
@@ -697,5 +708,4 @@ if(WOWB_VER) then
 	ChatThrottleLib.Frame:RegisterEvent("CHAT_MSG_SAY")
 end
 ]]
-
 

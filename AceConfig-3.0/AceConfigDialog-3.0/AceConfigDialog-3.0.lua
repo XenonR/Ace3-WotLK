@@ -7,7 +7,7 @@ local LibStub = LibStub
 local gui = LibStub("AceGUI-3.0")
 local reg = LibStub("AceConfigRegistry-3.0")
 
-local MAJOR, MINOR = "AceConfigDialog-3.0", 92
+local MAJOR, MINOR = "AceConfigDialog-3.0", 93
 local AceConfigDialog, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceConfigDialog then return end
@@ -24,7 +24,7 @@ AceConfigDialog.frame.closeAllOverride = AceConfigDialog.frame.closeAllOverride 
 -- Lua APIs
 local tinsert, tsort, tremove, wipe = table.insert, table.sort, table.remove, table.wipe
 local strmatch, format = string.match, string.format
-local error = error
+local error, pcall = error, pcall
 local pairs, next, select, type, unpack, ipairs = pairs, next, select, type, unpack, ipairs
 local tostring, tonumber = tostring, tonumber
 local math_min, math_max, math_floor = math.min, math.max, math.floor
@@ -42,7 +42,8 @@ end
 
 local function safecall(func, ...)
 	if func then
-		return xpcall(func, errorhandler, ...)
+		local args, argc = {...}, select("#", ...)
+		return xpcall(function() return func(unpack(args, 1, argc)) end, errorhandler)
 	end
 end
 
@@ -570,10 +571,13 @@ do
 			end
 		end)
 
-		local border = CreateFrame("Frame", nil, frame, "DialogBorderOpaqueTemplate")
+		local success, border = pcall(CreateFrame, "Frame", nil, frame, "DialogBorderOpaqueTemplate")
+		if not success then
+			border = CreateFrame("Frame", nil, frame)
+		end
 		border:SetAllPoints(frame)
-		frame:SetFixedFrameStrata(true)
-		frame:SetFixedFrameLevel(true)
+		if frame.SetFixedFrameStrata then frame:SetFixedFrameStrata(true) end
+		if frame.SetFixedFrameLevel then frame:SetFixedFrameLevel(true) end
 
 		local text = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
 		text:SetSize(290, 0)
@@ -585,12 +589,12 @@ do
 			button:SetSize(128, 21)
 			button:SetNormalFontObject(GameFontNormal)
 			button:SetHighlightFontObject(GameFontHighlight)
-			button:SetNormalTexture(130763) -- "Interface\\Buttons\\UI-DialogBox-Button-Up"
-			button:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875)
-			button:SetPushedTexture(130761) -- "Interface\\Buttons\\UI-DialogBox-Button-Down"
-			button:GetPushedTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875)
-			button:SetHighlightTexture(130762) -- "Interface\\Buttons\\UI-DialogBox-Button-Highlight"
-			button:GetHighlightTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875)
+			button:SetNormalTexture("Interface\\Buttons\\UI-DialogBox-Button-Up")
+			if button:GetNormalTexture() then button:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875) end
+			button:SetPushedTexture("Interface\\Buttons\\UI-DialogBox-Button-Down")
+			if button:GetPushedTexture() then button:GetPushedTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875) end
+			button:SetHighlightTexture("Interface\\Buttons\\UI-DialogBox-Button-Highlight")
+			if button:GetHighlightTexture() then button:GetHighlightTexture():SetTexCoord(0.0, 1.0, 0.0, 0.71875) end
 			button:SetText(newText)
 			return button
 		end
@@ -2014,7 +2018,16 @@ function AceConfigDialog:AddToBlizOptions(appName, name, parent, ...)
 		group:SetCallback("OnHide", ClearBlizPanel)
 
 		local categoryName = name or appName
-		if parent then
+		if not Settings then
+			if not parent and BlizOptionsIDMap[categoryName] then
+				error(("%s has already been added to the Blizzard Options Window with the given name: %s"):format(appName, categoryName), 2)
+			end
+			group:SetName(categoryName, parent)
+			if not parent then
+				BlizOptionsIDMap[categoryName] = categoryName
+			end
+			InterfaceOptions_AddCategory(group.frame)
+		elseif parent then
 			local parentID = BlizOptionsIDMap[parent] or parent
 			local category = Settings.GetCategory(parentID)
 			if not category then

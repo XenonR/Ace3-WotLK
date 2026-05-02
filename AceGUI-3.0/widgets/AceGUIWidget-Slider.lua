@@ -2,7 +2,7 @@
 Slider Widget
 Graphical Slider, like, for Range values.
 -------------------------------------------------------------------------------]]
-local Type, Version = "Slider", 24
+local Type, Version = "Slider", 25
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -13,6 +13,18 @@ local tonumber, pairs = tonumber, pairs
 -- WoW APIs
 local PlaySound = PlaySound
 local CreateFrame, UIParent = CreateFrame, UIParent
+local C_TimerAfter = C_Timer and C_Timer.After
+local AceTimer = LibStub and LibStub("AceTimer-3.0", true)
+
+local function TimerAfter(delay, func)
+	if C_TimerAfter then
+		C_TimerAfter(delay, func)
+	elseif AceTimer then
+		AceTimer:ScheduleTimer(func, delay)
+	else
+		func()
+	end
+end
 
 --[[-----------------------------------------------------------------------------
 Support functions
@@ -273,7 +285,7 @@ local function Constructor()
 		widget[method] = func
 	end
 	slider.obj, editbox.obj = widget, widget
-	C_Timer.After(0.3, function() editbox:SetText(" ") UpdateText(widget) end) -- Workaround for font loading issue, making the editboxes blank until the text is changed
+	TimerAfter(0.3, function() editbox:SetText(" ") UpdateText(widget) end) -- Workaround for font loading issue, making the editboxes blank until the text is changed
 
 	return AceGUI:RegisterAsWidget(widget)
 end

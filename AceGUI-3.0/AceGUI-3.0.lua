@@ -25,14 +25,14 @@
 -- @class file
 -- @name AceGUI-3.0
 -- @release $Id$
-local ACEGUI_MAJOR, ACEGUI_MINOR = "AceGUI-3.0", 41
+local ACEGUI_MAJOR, ACEGUI_MINOR = "AceGUI-3.0", 42
 local AceGUI, oldminor = LibStub:NewLibrary(ACEGUI_MAJOR, ACEGUI_MINOR)
 
 if not AceGUI then return end -- No upgrade needed
 
 -- Lua APIs
 local tinsert, wipe = table.insert, table.wipe
-local select, pairs, next, type = select, pairs, next, type
+local select, pairs, next, type, unpack = select, pairs, next, type, unpack
 local error, assert = error, assert
 local setmetatable, rawget = setmetatable, rawget
 local math_max, math_min, math_ceil = math.max, math.min, math.ceil
@@ -63,7 +63,8 @@ end
 
 local function safecall(func, ...)
 	if func then
-		return xpcall(func, errorhandler, ...)
+		local args, argc = {...}, select("#", ...)
+		return xpcall(function() return func(unpack(args, 1, argc)) end, errorhandler)
 	end
 end
 

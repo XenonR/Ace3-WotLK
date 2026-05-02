@@ -17,7 +17,7 @@
 -- @name AceTimer-3.0
 -- @release $Id$
 
-local MAJOR, MINOR = "AceTimer-3.0", 17 -- Bump minor on changes
+local MAJOR, MINOR = "AceTimer-3.0", 18 -- Bump minor on changes
 local AceTimer, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceTimer then return end -- No upgrade needed
@@ -27,7 +27,32 @@ local activeTimers = AceTimer.activeTimers -- Upvalue our private data
 -- Lua APIs
 local type, unpack, next, error, select = type, unpack, next, error, select
 -- WoW APIs
-local GetTime, C_TimerAfter = GetTime, C_Timer.After
+local GetTime, C_TimerAfter = GetTime, C_Timer and C_Timer.After
+
+if not C_TimerAfter then
+	AceTimer.frame = AceTimer.frame or CreateFrame("Frame")
+	AceTimer.frame:Hide()
+	AceTimer.timerQueue = AceTimer.timerQueue or {}
+
+	AceTimer.frame:SetScript("OnUpdate", function(self)
+		local now = GetTime()
+		for timer in next, AceTimer.timerQueue do
+			if timer.ends <= now then
+				AceTimer.timerQueue[timer] = nil
+				timer.callback()
+			end
+		end
+		if not next(AceTimer.timerQueue) then
+			self:Hide()
+		end
+	end)
+
+	C_TimerAfter = function(delay, callback)
+		local timer = { ends = GetTime() + delay, callback = callback }
+		AceTimer.timerQueue[timer] = true
+		AceTimer.frame:Show()
+	end
+end
 
 local function new(self, loop, func, delay, ...)
 	if delay < 0.01 then

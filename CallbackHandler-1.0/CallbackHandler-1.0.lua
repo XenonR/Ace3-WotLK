@@ -1,5 +1,5 @@
 --[[ $Id: CallbackHandler-1.0.lua 25 2022-12-12 15:02:36Z nevcairiel $ ]]
-local MAJOR, MINOR = "CallbackHandler-1.0", 8
+local MAJOR, MINOR = "CallbackHandler-1.0", 9
 local CallbackHandler = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not CallbackHandler then return end -- No upgrade needed
@@ -7,7 +7,7 @@ if not CallbackHandler then return end -- No upgrade needed
 local meta = {__index = function(tbl, key) tbl[key] = {} return tbl[key] end}
 
 -- Lua APIs
-local securecallfunction, error = securecallfunction, error
+local securecallfunction, error = securecallfunction or function(func, ...) return func(...) end, error
 local setmetatable, rawget = setmetatable, rawget
 local next, select, pairs, type, tostring = next, select, pairs, type, tostring
 
@@ -199,4 +199,3 @@ end
 -- CallbackHandler purposefully does NOT do explicit embedding. Nor does it
 -- try to upgrade old implicit embeds since the system is selfcontained and
 -- relies on closures to work.
-
