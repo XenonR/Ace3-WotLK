@@ -16,6 +16,7 @@ ignore = {
 globals = {
 	"Ace3",
 	"ChatThrottleLib",
+	"AceGUIWidgetLSMlists",
 
 	"AceGUIEditBoxInsertLink",
 	"AceGUIMultiLineEditBoxInsertLink",
@@ -59,6 +60,7 @@ read_globals = {
 	"IsLoggedIn",
 	"IsShiftKeyDown",
 	"PlaySound",
+	"PlaySoundFile",
 	"RegisterAddonMessagePrefix",
 	"ReloadUI",
 	"UnitClass",
@@ -103,6 +105,8 @@ read_globals = {
 	"UIParent",
 	"WOW_PROJECT_ID",
 	"WOW_PROJECT_MAINLINE",
+	"BackdropTemplateMixin",
+	"wipe",
 
 	-- Custom Globals
 	"GAME_LOCALE",

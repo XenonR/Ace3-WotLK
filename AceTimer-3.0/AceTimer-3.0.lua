@@ -33,15 +33,27 @@ if not C_TimerAfter then
 	AceTimer.frame = AceTimer.frame or CreateFrame("Frame")
 	AceTimer.frame:Hide()
 	AceTimer.timerQueue = AceTimer.timerQueue or {}
+	AceTimer.dueTimers = AceTimer.dueTimers or {}
 
 	AceTimer.frame:SetScript("OnUpdate", function(self)
 		local now = GetTime()
+		local dueTimers = AceTimer.dueTimers
+		local dueCount = 0
+
 		for timer in next, AceTimer.timerQueue do
 			if timer.ends <= now then
 				AceTimer.timerQueue[timer] = nil
-				timer.callback()
+				dueCount = dueCount + 1
+				dueTimers[dueCount] = timer
 			end
 		end
+
+		for i = 1, dueCount do
+			local timer = dueTimers[i]
+			dueTimers[i] = nil
+			timer.callback()
+		end
+
 		if not next(AceTimer.timerQueue) then
 			self:Hide()
 		end
