@@ -11,7 +11,7 @@
 -- @class file
 -- @name AceSerializer-3.0
 -- @release $Id$
-local MAJOR,MINOR = "AceSerializer-3.0", 5
+local MAJOR,MINOR = "AceSerializer-3.0", 335
 local AceSerializer, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceSerializer then return end

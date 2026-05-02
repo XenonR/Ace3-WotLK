@@ -10,7 +10,7 @@
 -- @class file
 -- @name AceConsole-3.0
 -- @release $Id$
-local MAJOR,MINOR = "AceConsole-3.0", 7
+local MAJOR,MINOR = "AceConsole-3.0", 335
 
 local AceConsole, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 

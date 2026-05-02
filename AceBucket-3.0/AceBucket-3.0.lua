@@ -36,7 +36,7 @@
 -- @name AceBucket-3.0.lua
 -- @release $Id$
 
-local MAJOR, MINOR = "AceBucket-3.0", 5
+local MAJOR, MINOR = "AceBucket-3.0", 335
 local AceBucket, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not AceBucket then return end -- No Upgrade needed

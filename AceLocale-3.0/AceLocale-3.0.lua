@@ -2,7 +2,7 @@
 -- @class file
 -- @name AceLocale-3.0
 -- @release $Id$
-local MAJOR,MINOR = "AceLocale-3.0", 6
+local MAJOR,MINOR = "AceLocale-3.0", 335
 
 local AceLocale, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
