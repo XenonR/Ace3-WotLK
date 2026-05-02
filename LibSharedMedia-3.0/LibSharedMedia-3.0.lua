@@ -26,7 +26,7 @@ local RESTRICTED_FILE_ACCESS = _G.WOW_PROJECT_ID and _G.WOW_PROJECT_MAINLINE and
 
 local locale = GetLocale()
 local locale_is_western
-local LOCALE_MASK = 0
+local LOCALE_MASK
 lib.LOCALE_BIT_koKR		= 1
 lib.LOCALE_BIT_ruRU		= 2
 lib.LOCALE_BIT_zhCN		= 4
